@@ -1039,16 +1039,20 @@ export default function getDefaultFormState<
   }
   // Empty formData needs the defaults that computeDefaults will generate to resolve dependencies.
   const emptyFormData = isEmptyFormData(formData);
-  const [schema] = retrieveSchemaInternal<T, S, F>(
-    context,
-    theSchema,
-    rootSchema ?? ({} as S),
-    formData,
-    undefined,
-    undefined,
-    undefined,
-    emptyFormData,
-  );
+  // Under `skipDefaults`, the root's own `allOf` is left for `computeDefaults()` to skip, as it skips a nested one
+  const [schema] =
+    ALL_OF_KEY in theSchema && !shouldPopulateAllOfDefaults(theSchema, context.defaultFormStateBehavior)
+      ? [theSchema]
+      : retrieveSchemaInternal<T, S, F>(
+          context,
+          theSchema,
+          rootSchema ?? ({} as S),
+          formData,
+          undefined,
+          undefined,
+          undefined,
+          emptyFormData,
+        );
 
   // Get the computed defaults with 'shouldMergeDefaultsIntoFormData' set to true to merge defaults into formData.
   // This is done when for example the value from formData does not exist in the schema 'enum' property, in such

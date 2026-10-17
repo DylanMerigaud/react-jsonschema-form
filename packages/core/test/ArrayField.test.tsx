@@ -3,6 +3,7 @@ import type {
   ArrayFieldTemplateProps,
   ArrayFieldItemButtonsTemplateProps,
   ArrayFieldItemTemplateProps,
+  DefaultFormStateBehavior,
   DescriptionFieldProps,
   ErrorSchema,
   FieldPath,
@@ -1083,6 +1084,32 @@ describe('ArrayField', () => {
       expect(inputs[0]).toHaveValue('Default name');
       expect(inputs[1]).toHaveValue('Default name');
     });
+
+    it.each<[DefaultFormStateBehavior['allOf'], string]>([
+      ['skipDefaults', ''],
+      ['populateDefaults', 'Default name'],
+    ])(
+      "should give an added item the defaults of the items schema's own allOf as the minItems item gets them, with allOf %s",
+      async (allOf, value) => {
+        const schema: RJSFSchema = {
+          type: 'object',
+          definitions: {
+            Thing: { type: 'object', properties: { name: { type: 'string', default: 'Default name' } } },
+          },
+          properties: {
+            foo: { type: 'array', minItems: 1, items: { allOf: [{ $ref: '#/definitions/Thing' }] } },
+          },
+        };
+        const { node } = createFormComponent({ schema, initialFormData: {}, defaultFormStateBehavior: { allOf } });
+
+        await user.click(node.querySelector('.rjsf-array-item-add button')!);
+
+        const inputs = node.querySelectorAll('input[type=text]');
+        expect(inputs).toHaveLength(2);
+        expect(inputs[0]).toHaveValue(value);
+        expect(inputs[1]).toHaveValue(value);
+      },
+    );
 
     it('should render an input for each default value, even when this is greater than minItems', () => {
       const schema: RJSFSchema = {

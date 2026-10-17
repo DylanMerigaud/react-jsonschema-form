@@ -1197,6 +1197,7 @@ describeRepeated('Form common: schema definitions and defaults', (createFormComp
             },
           ],
         },
+        defaultFormStateBehavior: { allOf: 'populateDefaults' },
       });
 
       await selectMode(node, 'b');
@@ -1283,6 +1284,7 @@ describeRepeated('Form common: schema definitions and defaults', (createFormComp
       const { node, onChange } = createFormComponent({
         schema: retypingCascade({ type: 'string', default: 'final' }),
         formData: retypingCascadeData,
+        defaultFormStateBehavior: { allOf: 'populateDefaults' },
       });
 
       await selectMode(node, 'b');
@@ -1298,6 +1300,7 @@ describeRepeated('Form common: schema definitions and defaults', (createFormComp
         schema: retypingCascade({ type: 'string' }),
         formData: retypingCascadeData,
         liveValidate: 'onChange',
+        defaultFormStateBehavior: { allOf: 'populateDefaults' },
       });
 
       await selectMode(node, 'b');

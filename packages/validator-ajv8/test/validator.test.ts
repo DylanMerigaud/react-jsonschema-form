@@ -3307,15 +3307,16 @@ describe('validateFormData() and the data handed to customValidate', () => {
     expect(customValidate.mock.calls[0][0]).toBeUndefined();
   });
 
-  it('computes them itself, with the default allOf merge, when the caller supplies none', () => {
+  it('computes them itself, under the default allOf behavior, when the caller supplies none', () => {
     const validator = new AJV8Validator({});
     const schema: RJSFSchema = {
       type: 'object',
+      properties: { own: { type: 'string', default: 'fromProperties' } },
       allOf: [{ properties: { merged: { type: 'string', default: 'fromAllOf' } } }],
     };
     const customValidate = vi.fn<CustomValidator>((_formData, errors) => errors);
     validator.validateFormData({}, schema, customValidate);
-    expect(customValidate.mock.calls[0][0]).toEqual({ merged: 'fromAllOf' });
+    expect(customValidate.mock.calls[0][0]).toEqual({ own: 'fromProperties' });
   });
 });
 
