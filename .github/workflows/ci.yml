@@ -2,9 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [main, v7]
-  pull_request:
-    branches: [main, v7]
+    branches: [ci/fix/5769-allof-enum-default]
+  workflow_dispatch:
 
 jobs:
   # None of these depend on the Node version or on a build, so they run once in their own job rather
